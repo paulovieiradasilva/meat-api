@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const model_router_1 = require("../common/model-router");
 const reviews_model_1 = require("./reviews.model");
+const authorization_handler_1 = require("../security/authorization.handler");
 class ReviewsRouter extends model_router_1.ModelRouter {
     constructor() {
         super(reviews_model_1.Review);
@@ -42,7 +43,7 @@ class ReviewsRouter extends model_router_1.ModelRouter {
          * Creates a new record
          * POST
          */
-        application.post(`${this.basePath}`, this.save);
+        application.post(`${this.basePath}`, [authorization_handler_1.authorize('user'), this.save]);
     }
 }
 exports.reviewsRouter = new ReviewsRouter();

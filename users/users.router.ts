@@ -1,6 +1,8 @@
 import { ModelRouter } from '../common/model-router'
 import * as restify from 'restify'
 import { User } from './users.model'
+import { authenticate } from '../security/authentication.handler';
+import { authorize } from '../security/authorization.handler';
 
 class UsersRouter extends ModelRouter<User> {
 
@@ -31,42 +33,44 @@ class UsersRouter extends ModelRouter<User> {
      * Returns a list of recordes
      * GET
      */
-    application.get({ path: `${this.basePath}`, version: '1.0.0' }, this.findAll)
-    application.get({ path: `${this.basePath}`, version: '2.0.0' }, [this.findBayEmail, this.findAll])
+    application.get({ path: `${this.basePath}`, version: '1.0.0' }, [authorize('admin'), this.findAll])
+    application.get({ path: `${this.basePath}`, version: '2.0.0' }, [authorize('admin'), this.findBayEmail, this.findAll])
 
     /**
      * Returns a recorder
      * GET
      * @param :id
      */
-    application.get(`${this.basePath}/:id`, [this.validateId, this.findById])
+    application.get(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.findById])
 
     /**
      * Creates a new record
      * POST
      */
-    application.post(`${this.basePath}`, this.save)
+    application.post(`${this.basePath}`, [authorize('admin'), this.save])
 
     /**
      * Updates one record
      * PUT
      * @param :id
      */
-    application.put(`${this.basePath}/:id`, [this.validateId, this.replace])
+    application.put(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.replace])
 
     /**
      * Partially updates a record
      * PATCH
      * @param :id
      */
-    application.patch(`${this.basePath}/:id`, [this.validateId, this.update])
+    application.patch(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.update])
 
     /**
      * Delete a record
      * DELETE
      * @param :id
      */
-    application.del(`${this.basePath}/:id`, [this.validateId, this.delete])
+    application.del(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.delete])
+
+    application.post(`${this.basePath}/authenticate`, authenticate)
 
   }
 }

@@ -22,6 +22,14 @@ const beforeAllTestes = () => {
             restaurantsRouter
         ])
         .then(() => User.remove({}).exec())
+        .then(() => {
+            let admin = new User()
+            admin.name = 'admin',
+                admin.email = 'admin@email.com',
+                admin.password = '123456',
+                admin.profiles = ['admin', 'user'],
+                admin.save()
+        })
         .then(() => Review.remove({}).exec())
         .then(() => Restaurant.remove({}).exec())
 }

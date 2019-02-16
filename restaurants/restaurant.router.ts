@@ -2,6 +2,7 @@ import { ModelRouter } from '../common/model-router'
 import * as restify from 'restify'
 import { NotFoundError } from 'restify-errors';
 import { Restaurant } from './restaurant.model'
+import { authorize } from '../security/authorization.handler';
 
 class RestaurantsRouter extends ModelRouter<Restaurant> {
 
@@ -52,7 +53,7 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
          * Returns a list of recordes
          * GET
          */
-        application.get(`${this.basePath}`, this.findAll)
+        application.get(`${this.basePath}`, [this.findAll])
 
         /**
          * Returns a recorder
@@ -65,28 +66,28 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
          * Creates a new record
          * POST
          */
-        application.post(`${this.basePath}`, this.save)
+        application.post(`${this.basePath}`, [authorize('admin'), this.save])
 
         /**
          * Updates one record
          * PUT
          * @param :id
          */
-        application.put(`${this.basePath}/:id`, [this.validateId, this.replace])
+        application.put(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.replace])
 
         /**
          * Partially updates a record
          * PATCH
          * @param :id
          */
-        application.patch(`${this.basePath}/:id`, [this.validateId, this.update])
+        application.patch(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.update])
 
         /**
          * Delete a record
          * DELETE
          * @param :id
          */
-        application.del(`${this.basePath}/:id`, [this.validateId, this.delete])
+        application.del(`${this.basePath}/:id`, [authorize('admin'), this.validateId, this.delete])
 
         /**
          * Return a list of restaurants menu
@@ -100,7 +101,7 @@ class RestaurantsRouter extends ModelRouter<Restaurant> {
          * PUT
          * @param :id
          */
-        application.put(`${this.basePath}/:id/menu`, [this.validateId, this.replaceMenu])
+        application.put(`${this.basePath}/:id/menu`, [authorize('admin'), this.validateId, this.replaceMenu])
 
     }
 }

@@ -2,6 +2,7 @@ import { ModelRouter } from '../common/model-router'
 import * as restify from 'restify'
 import * as mongoose from 'mongoose'
 import { Review } from './reviews.model'
+import { authorize } from '../security/authorization.handler';
 
 class ReviewsRouter extends ModelRouter<Review> {
 
@@ -51,7 +52,7 @@ class ReviewsRouter extends ModelRouter<Review> {
          * Creates a new record
          * POST
          */
-        application.post(`${this.basePath}`, this.save)
+        application.post(`${this.basePath}`, [authorize('user'), this.save])
 
     }
 }
